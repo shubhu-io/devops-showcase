@@ -1,0 +1,19 @@
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
