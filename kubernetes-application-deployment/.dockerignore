@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+docs
+diagrams
+screenshots
+scripts
+k8s

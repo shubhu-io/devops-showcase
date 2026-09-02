@@ -1,0 +1,29 @@
+flowchart TD
+    DEV["Developer pushes code to GitHub"]
+    GIT["GitHub Repository"]
+    JENKINS["Jenkins CI/CD Server"]
+    BUILD["Docker Build<br/>(Jenkins agent)"]
+    REG["Docker Image<br/>(tagged with BUILD_NUMBER + latest)"]
+    EC2["AWS EC2 Instance<br/>(Ubuntu + Docker Engine)"]
+    NGINX["Nginx Reverse Proxy<br/>listen 80"]
+    APP["App Container<br/>node server.js :3000"]
+    INTERNET["Internet Users"]
+
+    DEV -->|git push| GIT
+    GIT -->|webhook / SCM poll| JENKINS
+    JENKINS -->|checkout, test, build| BUILD
+    BUILD --> REG
+    REG -->|docker save / ssh docker load<br/>or registry push/pull| EC2
+    EC2 -->|docker run -d -p 127.0.0.1:3000:3000| APP
+    NGINX -->|proxy_pass| APP
+    INTERNET -->|HTTP :80| NGINX
+    JENKINS -->|SSH health check / curl| EC2
+
+    classDef aws fill:#FF9900,stroke:#232F3E,color:#232F3E;
+    classDef ci fill:#1B7B35,color:#fff;
+    classDef app fill:#0f172a,stroke:#38bdf8,color:#e2e8f0;
+    class DEV,GIT INTERNET style DEV fill:#0ea5e9,stroke:#0369a1,color:#fff;
+    class GIT fill:#f5f5f5,stroke:#555,color:#111;
+    class EC2,REG aws;
+    class JENKINS,BUILD ci;
+    class APP,NGINX app;

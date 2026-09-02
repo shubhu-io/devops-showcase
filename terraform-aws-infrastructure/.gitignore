@@ -1,0 +1,51 @@
+# Terraform — never commit state or secrets
+.terraform/
+terraform/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfplan.*
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+terraform.tfvars
+terraform/*.tfplan
+*.tfvars
+!*.tfvars.example
+!terraform.tfvars.example
+secrets/
+*credentials*
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pem.txt
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Logs
+*.log
+logs/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.tmp
+
+# Python (if used for scripts)
+__pycache__/
+.pytest_cache/
+.venv/
+venv/

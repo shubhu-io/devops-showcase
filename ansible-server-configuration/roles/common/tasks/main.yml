@@ -1,0 +1,36 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name:
+      - curl
+      - git
+      - ufw
+    state: present
+
+- name: Create web user
+  ansible.builtin.user:
+    name: "{{ web_user }}"
+    shell: /bin/bash
+    create_home: true
+    state: present
+
+- name: Allow OpenSSH through ufw
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Allow Nginx Full through ufw
+  community.general.ufw:
+    rule: allow
+    name: Nginx Full
+
+- name: Enable ufw
+  community.general.ufw:
+    state: enabled
+    policy: deny
+    direction: incoming

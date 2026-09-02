@@ -1,0 +1,12 @@
+# Context for `docker build ... ./app` is the app/ folder, so this file is
+# intentionally placed at the repo root as documentation + for any root builds.
+node_modules
+npm-debug.log
+*.md
+.git
+.env
+docker-compose.yml
+scripts
+docs
+diagrams
+screenshots

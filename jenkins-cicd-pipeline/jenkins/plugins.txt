@@ -1,0 +1,34 @@
+# Jenkins plugins for a Pipeline-as-Code setup.
+# Format: <artifactId>:<version>  (omit version to take the latest compatible release)
+
+workflow-aggregator
+workflow-job
+workflow-cps
+workflow-multibranch
+pipeline-stage-view
+pipeline-utility-steps
+pipeline-github-lib
+
+git
+scm-api
+github
+github-branch-source
+git-client
+credentials-binding
+
+docker-workflow
+docker-commons
+
+blueocean
+blueocean-rest
+blueocean-pipeline-api-impl
+
+configuration-as-code
+credentials
+plain-credentials
+
+ws-cleanup
+htmlpublisher
+timestamper
+build-discarder
+junit

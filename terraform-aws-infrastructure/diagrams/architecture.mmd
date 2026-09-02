@@ -1,0 +1,27 @@
+flowchart TD
+    User[🌐 Internet / User] -->|HTTP 80/443| IGW[Internet Gateway]
+
+    subgraph AWS["AWS Cloud"]
+        subgraph VPC["VPC 10.0.0.0/16"]
+            subgraph Subnet["Public Subnet 10.0.1.0/24"]
+                EC2["EC2 (t3.micro / t2.micro)<br/>Ubuntu 24.04 LTS"]
+                subgraph Instance["Inside the instance"]
+                    Docker["🐳 Docker container<br/>App on port 3000"]
+                    Nginx["🪟 Nginx<br/>reverse proxy :80"]
+                end
+            end
+
+            IGW --- VPC
+            VPC --> Subnet
+            Subnet --> EC2
+            EC2 --> Docker
+            Docker --> Nginx
+            Nginx -->|proxy_pass| Docker
+        end
+    end
+
+    EC2 -.->|SSM (IAM role)| AWS
+    IAM["IAM Role + Instance Profile<br/>AmazonSSMManagedInstanceCore + S3 read"] --- EC2
+    SG["Security Group<br/>22 from your IP<br/>80/443 from anywhere"] --- EC2
+
+    User -.->|SSH :22 (your IP only)| EC2

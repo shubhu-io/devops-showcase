@@ -1,0 +1,28 @@
+flowchart TD
+    A([Push to GitHub]) --> B[Webhook triggers Jenkins]
+    B --> C{Jenkinsfile exists?}
+    C -- No --> CF[FAIL: pipeline not found<br/>check repo path & script path]
+    C -- Yes --> D[Checkout code]
+    D --> E[Build & Validate<br/>node --check]
+    E -- fails --> EF[FAIL<br/>fix syntax error, rebuild]
+    E --> F[Run tests<br/>node --test]
+    F --> G{Tests passed?}
+    G -- No --> GF[FAIL<br/>test/example-failing.js was toggled]
+    G -- Yes --> H[Security check<br/>Trivy scan]
+    H --> I[Build Docker image]
+    I --> J[Run container<br/>unique name + BUILD_NUMBER]
+    J --> K{Container healthy?}
+    K -- No --> KF[FAIL<br/>port clash / app crash / HEALTHCHECK]
+    K -- Yes --> L[Health check<br/>curl /health]
+    L --> M{status ok?}
+    M -- No --> MF[FAIL<br/>container unhealthy]
+    M -- Yes --> N[Cleanup container]
+    N --> O([BUILD SUCCESS])
+
+    subgraph FailurePaths["Failure paths"]
+        CF
+        EF
+        GF
+        KF
+        MF
+    end

@@ -1,0 +1,15 @@
+flowchart TD
+    A[Write / edit HCL files<br/>provider, vpc, ec2, user-data...] --> B[terraform init<br/>download provider]
+    B --> C[terraform fmt -recursive<br/>format code]
+    C --> C1{validate passes?}
+    C1 -->|no| C2[fix HCL syntax / errors] --> C
+    C1 -->|yes| D[terraform plan<br/>show intended changes]
+    D --> D1{plan shows what you expect?}
+    D1 -->|no| D2[fix config or vars] --> D
+    D1 -->|yes| E[Human approves]
+    E --> F[terraform apply<br/>create infrastructure]
+    F --> G[verify: terraform output<br/>curl http://public_ip]
+    G --> H{destroy?}
+    H -->|not yet| I[continue improving / drift check]
+    H -->|yes| J[terraform destroy]
+    J --> K[verify cleanup<br/>AWS console empty]

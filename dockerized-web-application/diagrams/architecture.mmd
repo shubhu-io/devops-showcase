@@ -1,0 +1,23 @@
+flowchart TD
+    U[User / Browser] -->|HTTP :80| N[Nginx Reverse Proxy<br/>nginx:alpine]
+    N -->|proxy_pass :3000| A[Application Container<br/>Node.js node:22-alpine]
+    A -->|TCP :5432| D[(PostgreSQL<br/>postgres:16-alpine)]
+
+    subgraph NET[Network: appnet (bridge)]
+        N
+        A
+        D
+    end
+
+    subgraph VOL[Volume: pgdata]
+        D -.- PG[(PG data files)]
+    end
+
+    N -. health /health .-> A
+    A -. TCP check /api/message .-> D
+
+    style U fill:#e8f0fe,stroke:#1a73e8
+    style N fill:#fff8e1,stroke:#f9a825
+    style A fill:#e8f5e9,stroke:#2e7d32
+    style D fill:#fce4ec,stroke:#c62828
+    style PG fill:#fce4ec,stroke:#c62828

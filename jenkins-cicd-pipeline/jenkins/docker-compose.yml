@@ -1,0 +1,34 @@
+# Jenkins controller for the local CI/CD demo.
+#
+# SECURITY TRADEOFF (docker.sock):
+#   We mount the host's /var/run/docker.sock into the Jenkins container so the
+#   pipeline can run `docker build`, `docker run`, `docker exec` directly.
+#   This is the "Docker-outside-of-Docker" (DooD) pattern. Because the socket
+#   is how you control the Docker daemon, anything running inside the Jenkins
+#   container (plugins, scripts, malicious builds) effectively has ROOT access
+#   to the host. ONLY use this in a trusted, local / sandboxed environment.
+#   Safer alternatives: DinD (docker:dind sidecar) with remote agents, or
+#   per-build ephemeral agents that never touch the host socket.
+
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jenkins
+    restart: unless-stopped
+    privileged: false
+    ports:
+      - "${JENKINS_HTTP_PORT:-8080}:8080"   # Web UI + REST API
+      - "${JENKINS_JNLP_PORT:-50000}:50000" # Inbound build agents (JNLP)
+    environment:
+      JAVA_OPTS: "-Dhudson.model.DirectoryBrowserSupport.CSP= -Xmx2048m"
+      CASC_JENKINS_CONFIG: "/var/jenkins_home/casc_configs/jenkins.yaml"
+    volumes:
+      - jenkins_home:/var/jenkins_home                                    # persistent state
+      - /var/run/docker.sock:/var/run/docker.sock                         # DooD (see security note above)
+      - ./config-as-code/jenkins.yaml:/var/jenkins_home/casc_configs/jenkins.yaml:ro
+      - ./plugins.txt:/usr/share/jenkins/ref/plugins.txt:ro               # override hook (plugins are baked at build time)
+
+volumes:
+  jenkins_home:

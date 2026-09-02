@@ -1,0 +1,211 @@
+// Jenkinsfile
+// Declarative pipeline: Git Push -> Checkout -> Test -> Docker Build ->
+// Security Scan -> Deploy to EC2 -> Health Check, with rollback support.
+//
+// ============================================================================
+// CREDENTIALS REQUIRED IN JENKINS (Manage Jenkins > Credentials > Global):
+//   1. SSH key used to reach EC2 (kind: "SSH Username with private key",
+//      username: ubuntu). Give it ID `ec2-key`.
+//        -> Used by sshagent('ec2-key') in the Deploy stage.
+//   2. A secret text credential for the Jenkins API build trigger, optional:
+//      user/pass or token for remote triggering. Not strictly required for
+//      SCM-triggered builds.
+//   3. If you use a private Docker registry (ECR/Docker Hub), add a
+//      "Username with password" credential with id `dockerhub` and
+//      reference it with credentials('dockerhub'). The scripts in this
+//      repo default to direct image transfer (docker save/load), which
+//      needs no registry credentials.
+// ============================================================================
+//
+// REQUIRED JENKINS PARAMETERS / CONFIGURATION:
+//   - EC2_PUBLIC_IP : set as an environment variable in the Jenkins global
+//                     config, OR pass as a build parameter (this pipeline
+//                     reads it from the build environment/parameters).
+//   - The job must be configured to build the branch via SCM/webhook; the
+//     "Checkout" stage below uses `checkout scm`.
+
+pipeline {
+    agent any
+
+    environment {
+        // Set in Jenkins global config (Manage Jenkins > System) OR as a
+        // build parameter. Never hardcode your real IP here.
+        EC2_PUBLIC_IP   = "${params.EC2_PUBLIC_IP ?: env.EC2_PUBLIC_IP ?: ''}"
+
+        // Image naming. If using a private registry, prefix a repo URL here
+        // (e.g. 123456789012.dkr.ecr.us-east-1.amazonaws.com/node-app).
+        IMAGE_REPO      = 'node-app'
+        IMAGE_TAG       = "${BUILD_NUMBER}"
+        IMAGE           = "${IMAGE_REPO}:${BUILD_NUMBER}"
+        IMAGE_LATEST    = "${IMAGE_REPO}:latest"
+        CONTAINER_NAME  = 'node-app'
+        APP_PORT        = '3000'
+
+        // Relative path from the Jenkins workspace to the transferable image
+        // archive used when no registry is configured.
+        IMAGE_ARCHIVE   = 'app-image.tar'
+    }
+
+    options {
+        timestamps()
+        timeout(time: 30, unit: 'MINUTES')
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('app') {
+                    sh 'node --test'
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dir('app') {
+                    // BUILD_VERSION is baked in via ARG and shown on the page.
+                    sh """
+                        docker build \
+                          --build-arg BUILD_VERSION=${BUILD_NUMBER} \
+                          -t ${IMAGE} \
+                          -t ${IMAGE_LATEST} \
+                          .
+                    """
+                }
+            }
+        }
+
+        stage('Security Scan') {
+            // Trivy scans the image for known vulnerabilities.
+            // If the trivy binary is not installed on the agent, we log a
+            // warning and CONTINUE rather than fail the whole build.
+            steps {
+                script {
+                    def hasTrivy = sh(script: 'command -v trivy', returnStatus: true) == 0
+                    if (hasTrivy) {
+                        echo "Trivy found - scanning ${IMAGE}"
+                        sh """
+                            trivy image --exit-code 0 --severity HIGH,CRITICAL \
+                              --no-progress ${IMAGE}
+                        """
+                    } else {
+                        echo "WARNING: trivy binary not found on the agent. " +
+                             "Security scan SKIPPED. Install trivy to enable " +
+                             "(https://aquasecurity.github.io/trivy/)."
+                    }
+                }
+            }
+        }
+
+        stage('Transfer Image to EC2') {
+            // Registry-based alternative: `docker tag` + `docker push` to a
+            // registry, then the EC2 host pulls. See docs/architecture-decisions.md
+            // "SSH deploy vs docker registry pull".
+            steps {
+                script {
+                    if (env.USE_REGISTRY == 'true') {
+                        echo "USE_REGISTRY=true -> pushing ${IMAGE} to ${IMAGE_REPO}"
+                        withCredentials([usernamePassword(
+                                credentialsId: 'dockerhub',
+                                usernameVariable: 'REG_USER',
+                                passwordVariable: 'REG_PASS')]) {
+                            sh '''
+                                echo "$REG_PASS" | docker login --username "$REG_USER" --password-stdin
+                                docker push '"'"'${IMAGE}'"'"'
+                            '''
+                        }
+                    } else {
+                        echo "Direct transfer mode: docker save | ssh docker load"
+                        sshagent(['ec2-key']) {
+                            sh """
+                                docker save ${IMAGE} | ssh -o StrictHostKeyChecking=accept-new ubuntu@${EC2_PUBLIC_IP} 'docker load'
+                            """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EC2') {
+            steps {
+                script {
+                    // Copies the deploy scripts up to the host, then runs the
+                    // deploy.sh which starts the container and health-checks it.
+                    sshagent(['ec2-key']) {
+                        sh """
+                            ssh -o StrictHostKeyChecking=accept-new ubuntu@${EC2_PUBLIC_IP} 'mkdir -p /opt/devops'
+                            scp -o StrictHostKeyChecking=accept-new \
+                              scripts/deploy.sh scripts/rollback.sh scripts/healthcheck.sh \
+                              ubuntu@${EC2_PUBLIC_IP}:/opt/devops/
+                            ssh ubuntu@${EC2_PUBLIC_IP} 'sudo chmod +x /opt/devops/*.sh'
+                            ssh ubuntu@${EC2_PUBLIC_IP} \
+                              "IMAGE=${IMAGE} BUILD_VERSION=${BUILD_NUMBER} \
+                               APP_PORT=${APP_PORT} CONTAINER_NAME=${CONTAINER_NAME} \
+                               PREV_IMAGE_TAG=${IMAGE_REPO}:`expr ${BUILD_NUMBER} - 1` \
+                               bash /opt/devops/deploy.sh"
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                script {
+                    // Retry loop from Jenkins against the EC2 public IP.
+                    sshagent(['ec2-key']) {
+                        sh """
+                            scp -o StrictHostKeyChecking=accept-new scripts/healthcheck.sh ubuntu@${EC2_PUBLIC_IP}:/opt/devops/healthcheck.sh
+                            ssh ubuntu@${EC2_PUBLIC_IP} \
+                              "bash /opt/devops/healthcheck.sh http://127.0.0.1/health 20 3"
+                        """
+                    }
+                    // Confirm from the Jenkins side over the public endpoint too.
+                    sh """
+                        curl --fail --silent --show-error --retry 5 --retry-delay 3 \
+                          http://${EC2_PUBLIC_IP}/health
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline succeeded - ${IMAGE} is live behind Nginx on EC2."
+            // Optional: send a Slack/email notification with the new build tag.
+            // slackSend channel: '#deploys', message: "Deploy ${BUILD_NUMBER} OK: http://${EC2_PUBLIC_IP}"
+        }
+        failure {
+            echo "Pipeline failed - see stage logs. If Deploy/Health Check failed, run:"
+            echo "  ssh ubuntu@${EC2_PUBLIC_IP} TAG=${IMAGE_REPO}:<previous-build-num> bash /opt/devops/rollback.sh"
+            // Rollback hook: re-run the previous image if the deploy stage failed.
+            script {
+                def prev = (BUILD_NUMBER.toInteger() - 1)
+                try {
+                    sshagent(['ec2-key']) {
+                        sh """
+                            ssh -o StrictHostKeyChecking=accept-new ubuntu@${EC2_PUBLIC_IP} \
+                              "TAG=${IMAGE_REPO}:${prev} CONTAINER_NAME=${CONTAINER_NAME} \
+                               APP_PORT=${APP_PORT} bash /opt/devops/rollback.sh" || true
+                        """
+                    }
+                } catch (Exception e) {
+                    echo "Rollback attempt failed (host may be unreachable): ${e}"
+                }
+            }
+        }
+        always {
+            // Clean up local image archives produced during transfer.
+            sh "rm -f ${IMAGE_ARCHIVE} || true"
+        }
+    }
+}

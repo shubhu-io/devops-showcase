@@ -1,0 +1,37 @@
+# hello-web.service - demo backend for the reverse-proxy.
+# Serves /var/www/hello-web on 127.0.0.1:3000 using Python's http.server
+# (present by default on Ubuntu). In production this unit would run the
+# real application; the service-management pattern is identical.
+#
+# Install:
+#   sudo cp systemd/hello-web.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now hello-web
+
+[Unit]
+Description=Hello Web application (demo backend on 127.0.0.1:3000 for reverse proxy)
+After=network.target
+
+[Service]
+Type=simple
+User=webuser
+Group=webuser
+WorkingDirectory=/var/www/hello-web
+ExecStart=/usr/bin/python3 -m http.server 3000 --bind 127.0.0.1 --directory /var/www/hello-web
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/hello-web
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+{
+  "name": "node-app",
+  "version": "1.0.0",
+  "description": "Zero-dependency Node.js app for the Jenkins + Docker + AWS EC2 deployment pipeline",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

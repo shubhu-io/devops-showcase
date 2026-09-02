@@ -1,0 +1,49 @@
+# ============================================================================
+# Jenkins Configuration as Code (JCasC) - declarative controller config.
+# Loaded on boot via the CASC_JENKINS_CONFIG env var (see docker-compose.yml).
+#
+# NOTE: The GitHub credentials below are PLACEHOLDERS. Replace the values with
+# real credentials created in the Jenkins UI (Manage Jenkins > Credentials),
+# or use a secret manager. Never commit real tokens.
+# ============================================================================
+jenkins:
+  systemMessage: "Jenkins configured by JCasC - GitHub + Git + Jenkins + Docker CI/CD demo"
+
+  # Number of executors the controller can use for builds (local demo).
+  numExecutors: 2
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        # Admin user - override via JENKINS_ADMIN_ID / JENKINS_ADMIN_PASSWORD env vars or Jenkins UI.
+        - id: "${JENKINS_ADMIN_ID:-admin}"
+          password: "${JENKINS_ADMIN_PASSWORD:-change-me-admin-password}"
+
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+
+# ----------------------------------------------------------------------------
+# PLACEHOLDER CREDENTIALS - mark clearly as placeholders; never commit secrets.
+# In production, prefer the Kubernetes provider / HashiCorp Vault / env secrets.
+# ----------------------------------------------------------------------------
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-creds"                 # referenced by the Jenkinsfile
+              username: "<YOUR_GITHUB_USERNAME>"
+              password: "<YOUR_GITHUB_PERSONAL_ACCESS_TOKEN>"
+              description: "GitHub PAT for cloning public/private repos (PLACEHOLDER)"
+          - string:
+              scope: GLOBAL
+              id: "docker-registry-creds"
+              secret: "<DOCKER_HUB_USERNAME>:<DOCKER_HUB_PASSWORD>"
+              description: "Docker Hub login for registry push (PLACEHOLDER)"

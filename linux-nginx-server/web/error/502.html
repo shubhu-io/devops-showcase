@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>502 Bad Gateway</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f4f6f8;
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1c2733;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #dde3e8;
+      border-left: 6px solid #d64541;
+      border-radius: 8px;
+      padding: 2.5rem 3rem;
+      max-width: 520px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(28, 39, 51, 0.08);
+    }
+    h1 { margin: 0 0 0.5rem; font-size: 1.75rem; }
+    code { background: #f0f2f4; padding: 0.15rem 0.4rem; border-radius: 4px; }
+    p { margin: 0.4rem 0; color: #4a5866; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>502 Bad Gateway</h1>
+    <p>The Nginx reverse proxy could not reach the upstream application.</p>
+    <p>Check the backend: <code>systemctl status hello-web</code> and <code>journalctl -u hello-web -n 50</code></p>
+  </main>
+</body>
+</html>

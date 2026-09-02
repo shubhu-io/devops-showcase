@@ -1,0 +1,27 @@
+flowchart TD
+    A(["Git Push (feature/branch)"]) --> B["Jenkins webhook fires"]
+    B --> C["Checkout source code"]
+    C --> D{"Run node --test"}
+    D -->|"tests FAIL"| E["Build fails<br/>(no image, no deploy)"]
+    E --> Z([STOP - fix code, push again])
+    D -->|"tests PASS"| F["Docker build<br/>-t node-app:BUILD_NUMBER -t node-app:latest"]
+    F --> G{"Trivy security scan"}
+    G -->|"binary missing"| G1["WARN: scan skipped<br/>(pipeline continues)"]
+    G1 --> H
+    G -->|"HIGH/CRITICAL issues"| G2["Scan reports issues<br/>(exit-code 0, review after build)"]
+    G2 --> H
+    G -->|"clean"| H["Transfer image to EC2<br/>docker save | ssh | docker load"]
+    H --> I["Deploy: stop old container,<br/>docker run new container"]
+    I --> J{"Health check<br/>curl /health"}
+    J -->|"healthy"| K["Nginx serves app on :80"]
+    J -->|"unhealthy"| L["Rollback hook:<br/>re-run previous image tag"]
+    L --> M{"Rollback health check"}
+    M -->|"healthy"| K
+    M -->|"unhealthy"| N([INCIDENT - manual intervention])
+    K --> O([DONE - build #N live])
+    O --> P["Logs: docker logs, journalctl, cloudwatch"]
+
+    style A fill:#0ea5e9,stroke:#0369a1,color:#fff;
+    style E,N fill:#ef4444,stroke:#7f1d1d,color:#fff;
+    style O fill:#22c55e,stroke:#14532d,color:#fff;
+    style L fill:#f59e0b,stroke:#78350f,color:#fff;

@@ -1,0 +1,97 @@
+<mxfile host="app.diagrams.net" agent="opencode" version="24.0.0">
+  <diagram id="jenkins-aws-deployment" name="Architecture">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dev" value="Developer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0ea5e9;strokeColor=#0369a1;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="git" value="GitHub" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#555555;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="240" y="60" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="jenkins" value="Jenkins CI/CD&#xa;Checkout &#183; Test &#183; Build" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1B7B35;strokeColor=#0d4a1f;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="440" y="60" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="trivy" value="Security Scan&#xa;(Trivy)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1B7B35;strokeColor=#0d4a1f;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="440" y="170" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="image" value="Docker Image&#xa;node-app:BUILD_NUMBER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9900;strokeColor=#232F3E;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="440" y="270" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc" value="AWS VPC" style="shape=container;html=1;verticalAlign=top;align=center;fillColor=#FF9900;strokeColor=#232F3E;fontColor=#232F3E;opacity=20;dashed=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="380" width="560" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="AWS EC2 Instance&#xa;(Ubuntu + Docker Engine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9900;strokeColor=#232F3E;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="460" y="420" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="container" value="App Container&#xa;node server.js :3000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#e2e8f0;" vertex="1" parent="1">
+          <mxGeometry x="650" y="390" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="nginx" value="Nginx Reverse Proxy&#xa;listen :80" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#e2e8f0;" vertex="1" parent="1">
+          <mxGeometry x="650" y="540" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="internet" value="Internet Users" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0ea5e9;strokeColor=#0369a1;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="830" y="540" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hg" value="Health Check&#xa;(curl /health)" style="shape=process;whiteSpace=wrap;html=1;fillColor=#1B7B35;strokeColor=#0d4a1f;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="680" y="700" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="registry" value="Docker Registry&#xa;(ECR / Docker Hub)&#xa;optional path" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF9900;strokeColor=#232F3E;fontColor=#232F3E;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="420" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rollback" value="Rollback&#xa;(re-run previous tag)" style="shape=process;whiteSpace=wrap;html=1;fillColor=#f59e0b;strokeColor=#78350f;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="900" y="640" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="monitoring" value="Monitoring&#xa;docker logs / journalctl" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#e2e8f0;" vertex="1" parent="1">
+          <mxGeometry x="900" y="700" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="dev" target="git">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="git push" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="git" target="jenkins">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="webhook" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="jenkins" target="trivy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="docker build" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="trivy" target="image">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="docker save / load" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="image" target="ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="docker run" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="ec2" target="container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="proxy_pass :3000" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="nginx" target="container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="HTTP :80" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="internet" target="nginx">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="SSH" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="jenkins" target="ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="container" target="hg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="docker push / pull" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="registry" target="image">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="registry" target="ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" value="on failure" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="hg" target="rollback">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="rollback" target="monitoring">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="hg" target="monitoring">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,20 @@
+{
+  "name": "dockerized-application",
+  "version": "1.0.0",
+  "description": "Minimal dependency-light Node.js HTTP app used to demonstrate Docker, Docker Compose, Nginx and PostgreSQL.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "docker",
+    "docker-compose",
+    "nginx",
+    "nodejs",
+    "postgresql"
+  ],
+  "license": "MIT"
+}

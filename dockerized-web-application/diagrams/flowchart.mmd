@@ -1,0 +1,30 @@
+flowchart TD
+    S[Source Code<br/>app/, nginx/, database/] --> D[Dockerfile]
+    D -->|docker build| I[Image<br/>dockerized-app:latest]
+    I -->|docker run / compose up| C[Container]
+
+    C -->|depends_on healthy| DB[PostgreSQL container]
+    C -->|proxy_pass| N[Nginx container]
+
+    subgraph BUILD[CI Pipeline]
+        S
+        D
+        I
+    end
+
+    subgraph TEST[Testing]
+        HC{healthcheck passes?}
+        I --> HC
+        HC -- no --> STOP[Build fails — STOP]
+    end
+
+    subgraph RUN[Runtime]
+        C --> N
+        N -->|curl /health| OK{API responds 200?}
+        OK -- yes --> LIVE[(Live)]
+        OK -- no --> RB[Rollback<br/>compose down + checkout prev tag + up]
+    end
+
+    style STOP fill:#ffcdd2,stroke:#b71c1c
+    style RB fill:#ffcdd2,stroke:#b71c1c
+    style LIVE fill:#c8e6c9,stroke:#2e7d32

@@ -1,0 +1,34 @@
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+inventory/hosts.ini
+!inventory/hosts.ini.example
+
+# Ansible
+*.retry
+.ansible/
+*.log
+ansible.log
+
+# Terraform
+.terraform/
+*.tfstate
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Logs
+*.log

@@ -1,0 +1,31 @@
+flowchart TD
+    subgraph Client
+        A[Developer Laptop] -->|git push| B[(GitHub Repository)]
+        C[Browser] -->|HTTP GET :80| D
+    end
+
+    subgraph Server[Linux Server - Ubuntu 22.04/24.04]
+        D[Nginx Web Server]
+        D -->|serves static files| W[Web Root /var/www/hello-web]
+        D -->|proxy_pass /api| B1[Backend 127.0.0.1:3000]
+
+        subgraph Systemd
+            SVC[hello-web.service]
+            B1 -->|managed by| SVC
+        end
+
+        subgraph Firewall[ufw firewall]
+            F[allow OpenSSH 22<br/>allow Nginx Full 80/443<br/>deny everything else]
+        end
+
+        subgraph Logs
+            L1[nginx access/error logs<br/>/var/log/nginx/]
+            L2[journalctl -u nginx / hello-web]
+        end
+    end
+
+    B -->|git clone / git pull| D
+    C -->|http://SERVER_IP| D
+    D -->|writes| L1
+    SVC -->|writes| L2
+    F -.protects.-> Server

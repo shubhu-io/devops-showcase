@@ -1,0 +1,14 @@
+flowchart TD
+    Start([Deploy: deploy-site.sh]) --> Pull[git pull --ff-only]
+    Pull -->|pull failed - local drift| Stop1[STOP - resolve local changes / stash / reset]
+    Pull --> Copy[Copy web/ to /var/www/hello-web]
+    Copy --> Chown[chown -R webuser:webuser web root]
+    Chown --> Test{Nginx config test<br/>nginx -t}
+    Test -->|FAIL| Fix[Fix config syntax / duplicate directives]
+    Fix --> Test
+    Test -->|PASS| Reload[systemctl reload nginx<br/>zero-downtime apply]
+    Reload --> Smoke{Smoke test<br/>tests/smoke-test.sh}
+    Smoke -->|PASS| Done([Deployment successful])
+    Smoke -->|FAIL| Rollback[Rollback: git checkout previous-good-commit web/]
+    Rollback --> Copy
+    Stop1 --> End([Abort deployment])

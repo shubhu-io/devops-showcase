@@ -1,0 +1,21 @@
+# Dependencies / build artifacts
+node_modules
+npm-debug.log
+yarn-error.log
+*.tgz
+package-lock.json
+yarn.lock
+
+# VCS
+.git
+.gitignore
+
+# Local docs and context noise (not needed in the image)
+*.md
+README.md
+LICENSE
+
+# Editor / OS noise
+.DS_Store
+.vscode
+.idea

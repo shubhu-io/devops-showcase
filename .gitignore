@@ -1,0 +1,104 @@
+# --- Secrets & Credentials ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+credentials.json
+*credentials*
+secrets.yaml
+secrets/
+*.secret
+*.tfvars
+!*.tfvars.example
+!terraform.tfvars.example
+*.tfvars.json
+terraform.tfvars
+
+# --- Terraform ---
+.terraform/
+.terraform/**
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfplan.*
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+terraform.tfvars
+terraform.tfvars.json
+
+# --- Kubernetes ---
+*.secret.yaml
+kubeconfig*
+.kube/
+
+# --- Ansible ---
+*.retry
+inventory/hosts
+ansible.log
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+*.egg-info/
+pip-log.txt
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+build/
+coverage/
+
+# --- Java / Maven ---
+target/
+*.jar
+*.war
+*.class
+
+# --- Jenkins ---
+workspace/
+*.jpi
+
+# --- Logs ---
+logs/
+*.log
+*.log.*
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+
+# --- Large / Generated ---
+screenshots/*.png
+screenshots/*.jpg
+*.tar
+*.zip
+*.tgz
+
+# --- Portfolio: exclude separate workspace ---
+secure-ntier-cloud-platform/
+

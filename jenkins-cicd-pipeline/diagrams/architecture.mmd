@@ -1,0 +1,35 @@
+flowchart TD
+    subgraph Developer["Developer"]
+        DEV[Developer machine<br/>git commit + git push]
+    end
+
+    subgraph GitHub["GitHub (remote repo)"]
+        REPO[Git repository]
+        WH[Webhook<br/>on push event]
+    end
+
+    subgraph Jenkins["Jenkins controller (Docker container)"]
+        POLL[Job trigger<br/>webhook / polling / manual]
+        PIPE[Declarative Pipeline<br/>Jenkinsfile]
+        BUILD[Stage: Build & Validate<br/>node --check]
+        TEST[Stage: Test<br/>node --test]
+        SEC[Stage: Security Check<br/>Trivy scan]
+        HC[Stage: Health Check<br/>curl /health]
+    end
+
+    subgraph Docker["Docker on host"]
+        DIMG[Image build<br/>docker build ./app]
+        DCONT[Container<br/>docker run hello-app]
+    end
+
+    DEV -->|push| REPO
+    REPO --> WH
+    WH -->|HTTP POST| POLL
+    POLL --> PIPE
+    PIPE --> BUILD
+    BUILD --> TEST
+    TEST --> SEC
+    SEC --> DIMG
+    DIMG --> DCONT
+    DCONT --> HC
+    HC -->|"status:ok"| DONE[BUILD SUCCESS]

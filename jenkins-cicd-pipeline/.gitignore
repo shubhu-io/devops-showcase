@@ -1,0 +1,49 @@
+# Secrets — never commit real values
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.secret
+secrets/
+*credentials*
+
+# Node
+node_modules/
+npm-debug.log*
+coverage/
+
+# Jenkins local state
+jenkins_home/
+*.hpi
+*.jpi
+workspace/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Build artifacts
+dist/
+build/
+app/target/
+coverage/
+
+# Logs
+*.log
+logs/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.tmp

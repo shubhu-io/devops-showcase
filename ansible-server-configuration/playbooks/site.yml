@@ -1,0 +1,23 @@
+---
+- name: Configure web servers
+  hosts: web
+  become: true
+  vars:
+    web_user: webuser
+    web_root: /var/www/hello-web
+    server_name: hello.local
+  roles:
+    - common
+    - nginx
+    - app
+
+  handlers:
+    - name: Reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+    - name: Restart hello-web
+      ansible.builtin.systemd:
+        name: hello-web
+        state: restarted
+        daemon_reload: true

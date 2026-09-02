@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello from Nginx</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f4f6f8;
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1c2733;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #dde3e8;
+      border-radius: 10px;
+      padding: 3rem 3.5rem;
+      max-width: 560px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(28, 39, 51, 0.08);
+    }
+    h1 { margin: 0 0 0.75rem; font-size: 2rem; }
+    p { margin: 0.4rem 0; color: #4a5866; }
+    .tag {
+      display: inline-block;
+      margin-top: 1.25rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      background: #e7f0fb;
+      color: #1a5fb4;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Hello from Nginx!</h1>
+    <p>This page is served by <strong>Nginx</strong> running on an Ubuntu Linux server.</p>
+    <p>Deployed from Git, supervised by systemd, protected by ufw.</p>
+    <span class="tag">Linux + Nginx + systemd + ufw</span>
+  </main>
+</body>
+</html>

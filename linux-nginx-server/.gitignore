@@ -1,0 +1,35 @@
+# Secrets & credentials
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.jks
+secrets/
+credentials
+*credentials*
+
+# Terraform (if reused here)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Logs
+*.log
+*.log.*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temp
+*.tmp
+*.temp
