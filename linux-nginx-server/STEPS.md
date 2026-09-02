@@ -33,3 +33,31 @@ sudo systemctl disable --now hello-web
 sudo rm /etc/nginx/sites-enabled/hello-site
 sudo systemctl reload nginx
 ```
+
+## Deploy Your Own App (3 changes)
+
+**1. Use your GitHub repo (replace the clone link everywhere):**
+```bash
+# fork https://github.com/shubhu-io/linux-nginx-server on GitHub, then:
+git clone https://github.com/<YOUR_USERNAME>/linux-nginx-server.git
+cd linux-nginx-server
+# point local git to your repo (if you cloned the template):
+git remote set-url origin https://github.com/<YOUR_USERNAME>/linux-nginx-server.git
+git push -u origin master
+```
+
+**2. Put your app in `web/` and/or edit `nginx/hello-site.conf`:**
+```bash
+# edit your homepage
+nano web/index.html
+# change server_name / root if needed
+nano nginx/hello-site.conf
+# test
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+**3. Deploy:**
+```bash
+sudo bash scripts/deploy-site.sh
+curl -I http://YOUR_SERVER_IP/
+```

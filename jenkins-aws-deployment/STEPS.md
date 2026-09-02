@@ -35,3 +35,28 @@ curl http://<EC2_PUBLIC_IP>/health
 aws ec2 terminate-instances --instance-ids <id>
 docker rm -f node-app
 ```
+
+## Deploy Your Own App (3 changes)
+
+**1. Use your GitHub repo:**
+```bash
+# fork https://github.com/shubhu-io/jenkins-aws-deployment
+git clone https://github.com/<YOUR_USERNAME>/jenkins-aws-deployment.git
+cd jenkins-aws-deployment
+git remote set-url origin https://github.com/<YOUR_USERNAME>/jenkins-aws-deployment.git
+```
+
+**2. Replace the app + update deploy config:**
+```bash
+nano app/server.js
+# in Jenkinsfile change:
+# IMAGE_REPO = 'node-app' -> 'my-app'
+# APP_PORT = '3000' (must match your app)
+# and set Jenkins env EC2_PUBLIC_IP to your EC2 IP
+```
+
+**3. Update EC2 target:**
+```bash
+# in scripts/deploy.sh / nginx/app-proxy.conf, ensure proxy points to your APP_PORT
+# then: git push -> Jenkins builds -> curl http://<YOUR_EC2_IP>/health
+```

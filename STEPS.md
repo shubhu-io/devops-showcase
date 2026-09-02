@@ -130,3 +130,42 @@ aws ec2 terminate-instances --instance-ids <id>
 ```bash
 PORT=34567 node --test
 ```
+
+---
+
+## Deploy Your Own App — Where to Change Your GitHub Link
+
+**For every repo (3 places):**
+
+**1. Fork & point your system to your GitHub repo:**
+```bash
+# on GitHub: Fork https://github.com/shubhu-io/<repo> to https://github.com/<YOUR_USERNAME>/<repo>
+git clone https://github.com/<YOUR_USERNAME>/<repo>.git
+cd <repo>
+# if you cloned the template directly, change the remote:
+git remote set-url origin https://github.com/<YOUR_USERNAME>/<repo>.git
+git remote -v
+git push -u origin master   # or main
+# check: gh repo view --json url  OR  git remote get-url origin
+```
+
+**2. Replace the demo app with yours:**
+- `linux-nginx-server`: edit `web/index.html` and `nginx/hello-site.conf`
+- `dockerized-web-application`: replace `app/server.js`, update `docker-compose.yml` image name, `cp .env.example .env`
+- `jenkins-cicd-pipeline`: replace `app/`, update `Jenkinsfile` `APP_IMAGE = 'my-app'`, and `jenkins/.env.example` `GITHUB_REPO_URL`
+- `jenkins-aws-deployment`: replace `app/`, update `Jenkinsfile` `IMAGE_REPO` and `APP_PORT`, update `EC2_PUBLIC_IP` in Jenkins
+- `terraform-aws-infrastructure`: edit `terraform/terraform.tfvars` `app_image = "ghcr.io/<YOUR_USERNAME>/my-app:latest"` and `key_name`/`allowed_ssh_cidr`
+- `kubernetes-application-deployment`: `docker build -t ghcr.io/<YOUR_USERNAME>/my-app:1.0.0 ./app && docker push ...` → update `k8s/deployment.yaml` `image: ghcr.io/<YOUR_USERNAME>/my-app:1.0.0`
+- `ansible-server-configuration`: edit `inventory/hosts.ini` `ansible_host=<YOUR_IP>`, `playbooks/site.yml` vars, `roles/nginx/tasks/main.yml` inline HTML
+- `github-actions-cicd`: replace `app/` — no image rename needed, `ghcr.io/${{ github.repository }}` auto-uses your new repo name; push tag `git tag v1.0.0 && git push origin v1.0.0` to publish
+
+**3. Verify your link is active:**
+```bash
+git remote -v                          # should show YOUR_USERNAME
+git log --oneline -1
+curl -I https://raw.githubusercontent.com/<YOUR_USERNAME>/<repo>/master/README.md
+# for GHCR:
+docker pull ghcr.io/<YOUR_USERNAME>/<repo>:latest
+```
+
+> Tip: Keep `STEPS.md` in your fork — it already points to `shubhu-io`; replace with `<YOUR_USERNAME>` everywhere before first push. Each repo's own `STEPS.md` has the exact 3 changes for that stack.
