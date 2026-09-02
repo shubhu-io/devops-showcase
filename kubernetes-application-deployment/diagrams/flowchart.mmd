@@ -1,0 +1,6 @@
+flowchart LR
+    A[Build image] --> B[kind load / push]
+    B --> C[kubectl apply -f k8s/]
+    C --> D[Rollout status]
+    D --> E[Port-forward & curl health]
+    E --> F[HPA scales on cpu/mem]

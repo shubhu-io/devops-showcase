@@ -1,0 +1,6 @@
+flowchart LR
+    C[Control Node] -->|SSH| H[Ubuntu web]
+    H --> UFW[ufw 22,80,443]
+    H --> NG[Nginx :80]
+    NG --> ROOT[/var/www/hello-web]
+    H --> SVC[hello-web.service :3000]
