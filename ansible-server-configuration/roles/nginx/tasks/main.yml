@@ -12,17 +12,7 @@
     group: "{{ web_user }}"
     mode: "0755"
 
-- name: Deploy static site
-  ansible.builtin.copy:
-    src: ../../../linux-nginx-server/web/
-    dest: "{{ web_root }}/"
-    owner: "{{ web_user }}"
-    group: "{{ web_user }}"
-    mode: "0644"
-  # For standalone demo, inline content if source not present
-  ignore_errors: true
-
-- name: Ensure hello-site content
+- name: Deploy static site (inline, standalone)
   ansible.builtin.copy:
     dest: "{{ web_root }}/index.html"
     content: |

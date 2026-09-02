@@ -4,7 +4,7 @@ Idempotent Ansible automation to provision a secure Ubuntu + Nginx web server �
 
 ## Overview
 
-This repository codifies the `linux-nginx-server` manual steps into Ansible: an inventory, a playbook (`site.yml`), and three roles (`common`, `nginx`, `app`). Applied to a fresh Ubuntu 22.04/24.04 host, it opens only SSH and HTTP, creates a dedicated `webuser`, deploys the site, templates Nginx, and ensures the backend service is running — all idempotently.
+This repository codifies manual Ubuntu + Nginx provisioning steps into Ansible: an inventory, a playbook (`site.yml`), and three roles (`common`, `nginx`, `app`). Applied to a fresh Ubuntu 22.04/24.04 host, it opens only SSH and HTTP, creates a dedicated `webuser`, deploys the site, templates Nginx, and ensures the backend service is running — all idempotently.
 
 **Real-world problem it solves:** shell scripts drift and are hard to audit; Ansible provides declarative, reusable, check-mode-friendly configuration.
 
