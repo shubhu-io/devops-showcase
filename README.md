@@ -10,14 +10,24 @@ Production-inspired, standalone DevOps projects — each repository is self-cont
 
 | Repository | What it does | Key technologies |
 |---|---|---|
-| [`linux-nginx-server`](linux-nginx-server/) | Secure Linux + Nginx web server with systemd supervision and git-based deploys | Ubuntu, Nginx, systemd, ufw, SSH, Bash |
-| [`dockerized-web-application`](dockerized-web-application/) | Multi-container app with Nginx → Node.js → PostgreSQL, isolated network and persistent volume | Docker, Docker Compose, Nginx, Node.js, PostgreSQL |
-| [`jenkins-cicd-pipeline`](jenkins-cicd-pipeline/) | Jenkins declarative pipeline that builds, tests, scans, and health-checks a containerized app | Jenkins, Docker, Trivy, Node.js, Bash |
-| [`jenkins-aws-deployment`](jenkins-aws-deployment/) | End-to-end deploy from Git push to AWS EC2 via Jenkins, SSH, and Nginx reverse proxy | Jenkins, Docker, AWS EC2, Nginx |
-| [`terraform-aws-infrastructure`](terraform-aws-infrastructure/) | Terraform-provisioned AWS stack (VPC, subnet, SG, IAM, EC2) booting Docker + Nginx via user-data | Terraform, AWS, Docker, Nginx, Node.js |
-| [`kubernetes-application-deployment`](kubernetes-application-deployment/) | K8s Deployment/Service/Ingress/HPA with probes and securityContext for the demo app | Kubernetes, Docker, Node.js |
-| [`ansible-server-configuration`](ansible-server-configuration/) | Idempotent Ansible roles to configure Ubuntu+Nginx (common/nginx/app) via `ansible-playbook` | Ansible, Ubuntu, Nginx, systemd, Jinja2 |
-| [`github-actions-cicd`](github-actions-cicd/) | GitHub Actions CI (lint/test/build/health) and GHCR publish (Buildx, OIDC) | GitHub Actions, Docker, GHCR, Node.js |
+| [`linux-nginx-server`](https://github.com/shubhu-io/linux-nginx-server) | Secure Linux + Nginx web server with systemd supervision and git-based deploys | Ubuntu, Nginx, systemd, ufw, SSH, Bash |
+| [`dockerized-web-application`](https://github.com/shubhu-io/dockerized-web-application) | Multi-container app with Nginx → Node.js → PostgreSQL, isolated network and persistent volume | Docker, Docker Compose, Nginx, Node.js, PostgreSQL |
+| [`jenkins-cicd-pipeline`](https://github.com/shubhu-io/jenkins-cicd-pipeline) | Jenkins declarative pipeline that builds, tests, scans, and health-checks a containerized app | Jenkins, Docker, Trivy, Node.js, Bash |
+| [`jenkins-aws-deployment`](https://github.com/shubhu-io/jenkins-aws-deployment) | End-to-end deploy from Git push to AWS EC2 via Jenkins, SSH, and Nginx reverse proxy | Jenkins, Docker, AWS EC2, Nginx |
+| [`terraform-aws-infrastructure`](https://github.com/shubhu-io/terraform-aws-infrastructure) | Terraform-provisioned AWS stack (VPC, subnet, SG, IAM, EC2) booting Docker + Nginx via user-data | Terraform, AWS, Docker, Nginx, Node.js |
+| [`kubernetes-application-deployment`](https://github.com/shubhu-io/kubernetes-application-deployment) | K8s Deployment/Service/Ingress/HPA with probes and securityContext for the demo app | Kubernetes, Docker, Node.js |
+| [`ansible-server-configuration`](https://github.com/shubhu-io/ansible-server-configuration) | Idempotent Ansible roles to configure Ubuntu+Nginx (common/nginx/app) via `ansible-playbook` | Ansible, Ubuntu, Nginx, systemd, Jinja2 |
+| [`github-actions-cicd`](https://github.com/shubhu-io/github-actions-cicd) | GitHub Actions CI (lint/test/build/health) and GHCR publish (Buildx, OIDC) | GitHub Actions, Docker, GHCR, Node.js |
+
+## Additional Standalone Repositories
+
+| Repository | What it does | Key technologies |
+|---|---|---|
+| [`git-terraform-vpc`](https://github.com/shubhu-io/git-terraform-vpc) | Terraform VPC topology scaffold — VPC, subnets, gateways, bastion, web, DB (work in progress) | Terraform, AWS |
+| [`jenkins`](https://github.com/shubhu-io/jenkins) | Jenkins administration & operations scripts, configs, and guides | Jenkins, Bash, Docker |
+| [`jenkins-script`](https://github.com/shubhu-io/jenkins-script) | Large Jenkins script collection — AWS helpers, Helm, pipelines, installation guides | Jenkins, Bash, AWS, Helm |
+| [`jenkins-terraform`](https://github.com/shubhu-io/jenkins-terraform) | Jenkins controller + portfolio app EC2 on AWS provisioned with Terraform | Terraform, AWS, Jenkins, Nginx |
+| [`mern-stack-using-terra`](https://github.com/shubhu-io/mern-stack-using-terra) | MERN-style Node.js app on AWS — VPC, ALB, ASG, MongoDB via Terraform | Terraform, AWS, Node.js, MongoDB |
 
 ---
 
