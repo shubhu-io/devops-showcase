@@ -13,8 +13,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: node --check app/server.js
-      - run: node --test app/server.js 2>&1 || node --test
+      - run: node --check server.js
+        working-directory: app
+      - run: node --test server.js
         working-directory: app
       - run: bash -n scripts/healthcheck.sh || true
 

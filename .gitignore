@@ -3,17 +3,39 @@
 .env.*
 *.pem
 *.key
+*.p12
+*.pfx
+*.jks
+*credentials*
+secrets.yaml
+secrets/
+*.secret
+*.tfvars
+!*.tfvars.example
+*.tfstate
+*.tfstate.*
+.terraform/
+kubeconfig*
+.kube/
 
 # Node
 node_modules/
 npm-debug.log*
+yarn-error.log*
+dist/
+build/
+coverage/
 
-# Docker
-.docker/
+# Python / Ansible / Logs
+__pycache__/
+*.retry
+ansible.log
+*.log
 
-# OS
+# OS / Editor
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
 *.swp
+*~

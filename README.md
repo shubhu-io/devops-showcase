@@ -128,7 +128,10 @@ github-actions-cicd/
 │   ├── Dockerfile
 │   ├── package.json
 │   └── server.js
-└── scripts/healthcheck.sh
+├── scripts/healthcheck.sh
+├── docs/
+├── diagrams/
+└── screenshots/
 ```
 
 ## Future Improvements
