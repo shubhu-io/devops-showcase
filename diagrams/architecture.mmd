@@ -1,0 +1,5 @@
+flowchart LR
+    P[git push] --> CI[ci.yml: lint -> test -> docker build -> health]
+    T[git tag v*] --> PUB[docker-publish.yml: buildx -> GHCR]
+    CI --> GHCR[ghcr.io image]
+    PUB --> GHCR
