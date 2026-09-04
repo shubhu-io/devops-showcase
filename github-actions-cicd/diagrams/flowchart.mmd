@@ -1,0 +1,7 @@
+flowchart TD
+    A[push to main] --> B[node --check]
+    B --> C[node --test]
+    C --> D[docker build]
+    D --> E[curl /health]
+    F[tag v1.0.0] --> G[login GHCR]
+    G --> H[buildx push amd64/arm64]

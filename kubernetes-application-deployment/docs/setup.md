@@ -1,16 +1,30 @@
-# Setup — kubernetes-application-deployment
+# Setup
 
 ## Prerequisites
-- Docker, kubectl, cluster (Kind/minikube/cloud) + nginx Ingress Controller
+- Docker, kubectl v1.28+, cluster (Kind/minikube/Docker Desktop/EKS).
 
-## Steps
+## Create cluster (Kind)
 ```bash
-git clone https://github.com/shubhu-io/kubernetes-application-deployment.git
-cd kubernetes-application-deployment
 kind create cluster --name demo
+kubectl cluster-info --context kind-demo
+```
+
+## Build & load image
+```bash
 docker build -t ghcr.io/your-org/kubernetes-demo-app:1.0.0 ./app
 kind load docker-image ghcr.io/your-org/kubernetes-demo-app:1.0.0 --name demo
+# for cloud: docker push ghcr.io/your-org/kubernetes-demo-app:1.0.0
+```
+
+## Ingress controller (Kind)
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
+```
+
+## Deploy
+```bash
 bash scripts/deploy.sh
-kubectl port-forward svc/demo-app -n demo-app 8080:80 &
-curl http://localhost:8080/health
+# or: kubectl apply -f k8s/
+kubectl get pods,svc,ingress,hpa -n demo-app
 ```

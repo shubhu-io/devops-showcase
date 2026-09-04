@@ -105,6 +105,17 @@ pipeline {
             }
         }
 
+        stage('Validate') {
+            steps {
+                script {
+                    if (!env.EC2_PUBLIC_IP?.trim()) {
+                        error("EC2_PUBLIC_IP is not set. Configure it in Jenkins (Manage Jenkins > System > Global properties > Environment variables) or as a build parameter.")
+                    }
+                    echo "Target EC2: ${EC2_PUBLIC_IP}"
+                }
+            }
+        }
+
         stage('Transfer Image to EC2') {
             // Registry-based alternative: `docker tag` + `docker push` to a
             // registry, then the EC2 host pulls. See docs/architecture-decisions.md

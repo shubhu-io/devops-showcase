@@ -102,3 +102,10 @@ screenshots/*.jpg
 # --- Portfolio: exclude separate workspace ---
 secure-ntier-cloud-platform/
 
+# --- Draft / legacy folders (not part of 8-project portfolio) ---
+git-terraform-vpc/
+jenkins/
+jenkins script/
+jenkins+terraform/
+mern stack using terra/
+

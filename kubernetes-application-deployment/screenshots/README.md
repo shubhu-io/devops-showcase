@@ -1,11 +1,15 @@
-# Screenshots — kubernetes-application-deployment
+# Screenshots
 
-Capture, do not fabricate:
+Capture:
+- kubectl get pods,svc,ingress,hpa -n demo-app
+- kubectl port-forward + curl /health 200
+- kubectl describe pod probes
+- kind cluster-info
 
-1. `kubectl get pods -n demo-app`
-2. `kubectl get svc,ingress,hpa -n demo-app`
-3. `curl http://localhost:8080/health` after port-forward
-4. `kubectl top pods -n demo-app` (if metrics-server)
-5. `kubectl logs deployment/demo-app -n demo-app --tail=20`
-
-Store as `screenshots/*.png` (gitignored by default, README explains capture).
+```bash
+kubectl get pods -n demo-app
+kubectl port-forward svc/demo-app -n demo-app 8080:80 &
+curl http://localhost:8080/health
+kubectl describe pod -l app=demo-app -n demo-app | grep -A5 Probe
+```
+Store as screenshots/*.png (gitignored by root .gitignore; keep README).

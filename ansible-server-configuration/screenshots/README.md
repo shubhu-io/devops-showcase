@@ -1,8 +1,12 @@
-# Screenshots — ansible-server-configuration
+# Screenshots
 
-Capture (do not fabricate):
+Capture:
+- ansible-playbook --check --diff (changed=0 on 2nd run)
+- ansible-playbook run (changed IDs)
+- ssh target curl -I 200 and systemctl status nginx
 
-1. `ansible -i inventory/hosts.ini web -m ping`
-2. `ansible-playbook -i inventory/hosts.ini playbooks/site.yml --check --diff`
-3. `curl -I http://YOUR_SERVER_IP/` after apply
-4. `systemctl status nginx hello-web` on target
+```bash
+ansible-playbook -i inventory/hosts.ini playbooks/site.yml --check --diff
+ansible-playbook -i inventory/hosts.ini playbooks/site.yml
+ssh ubuntu@<host> "curl -I http://127.0.0.1/; systemctl status nginx --no-pager"
+```

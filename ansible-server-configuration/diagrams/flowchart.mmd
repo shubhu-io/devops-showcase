@@ -1,0 +1,5 @@
+flowchart TD
+    A[ansible-playbook] --> B[common: apt/user/ufw]
+    B --> C[nginx: install/template/nginx -t]
+    C --> D[app: systemd unit/daemon-reload]
+    D --> E[handlers: reload nginx / restart app]
